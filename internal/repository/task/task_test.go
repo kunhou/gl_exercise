@@ -104,7 +104,6 @@ func (suite *taskTestSuite) TestCreate() {
 }
 
 func (suite *taskTestSuite) TestCreateFirst() {
-	// create
 	task, err := suite.repo.Create(context.Background(), entity.Task{
 		Name:   "task 1",
 		Status: 0,
@@ -132,7 +131,6 @@ func (suite *taskTestSuite) TestUpdate() {
 		Status: 1,
 	}
 
-	// update
 	task, err := suite.repo.Update(context.Background(), 1, entity.Task{
 		Name:   "task 1 updated",
 		Status: 1,
@@ -147,7 +145,6 @@ func (suite *taskTestSuite) TestUpdate() {
 	}, task)
 }
 
-// update not exist
 func (suite *taskTestSuite) TestUpdateNotExist() {
 	suite.repo.taskStorage[1] = entity.Task{
 		Id:     1,
@@ -155,7 +152,6 @@ func (suite *taskTestSuite) TestUpdateNotExist() {
 		Status: 0,
 	}
 
-	// update
 	task, err := suite.repo.Update(context.Background(), 2, entity.Task{
 		Name:   "task 2 updated",
 		Status: 0,
@@ -167,4 +163,33 @@ func (suite *taskTestSuite) TestUpdateNotExist() {
 	suite.Equal(reason.TaskNotFound, myErr.Reason)
 
 	suite.Equal(entity.Task{}, task)
+}
+
+func (suite *taskTestSuite) TestDelete() {
+	suite.repo.taskStorage[1] = entity.Task{
+		Id:     1,
+		Name:   "task 1",
+		Status: 0,
+	}
+
+	suite.repo.taskStorage[2] = entity.Task{
+		Id:     2,
+		Name:   "task 2",
+		Status: 1,
+	}
+
+	err := suite.repo.Delete(context.Background(), 1)
+
+	suite.NoError(err)
+
+	suite.Equal(1, len(suite.repo.taskStorage))
+}
+
+func (suite *taskTestSuite) TestDeleteNotExist() {
+	err := suite.repo.Delete(context.Background(), 1)
+
+	var myErr *errors.Error
+	suite.ErrorAs(err, &myErr)
+	suite.Equal(404, myErr.Code)
+	suite.Equal(reason.TaskNotFound, myErr.Reason)
 }
