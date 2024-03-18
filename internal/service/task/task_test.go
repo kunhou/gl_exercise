@@ -109,3 +109,11 @@ func (suite *taskTestSuite) TestUpdate() {
 		Status: 1,
 	}, data)
 }
+
+func (suite *taskTestSuite) TestDelete() {
+	suite.repo.EXPECT().Delete(gomock.Any(), 1).Return(nil)
+
+	err := suite.taskSrv.Delete(context.Background(), 1)
+
+	suite.NoError(err)
+}

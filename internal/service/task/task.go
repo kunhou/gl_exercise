@@ -2,6 +2,7 @@ package task
 
 import (
 	"context"
+	"errors"
 
 	"github/kunhou/gl_exercise/internal/entity"
 )
@@ -19,4 +20,8 @@ func (s *Service) Create(ctx context.Context, task entity.Task) (result entity.T
 func (s *Service) Update(ctx context.Context, id int, task entity.Task) (result entity.Task, err error) {
 	result, err = s.taskRepo.Update(ctx, id, task)
 	return
+}
+
+func (s *Service) Delete(ctx context.Context, id int) error {
+	return errors.New("not implemented")
 }
