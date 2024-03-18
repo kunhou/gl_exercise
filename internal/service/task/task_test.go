@@ -63,3 +63,25 @@ func (suite *taskTestSuite) TestList() {
 		},
 	}, data)
 }
+
+func (suite *taskTestSuite) TestCreate() {
+	suite.repo.EXPECT().Create(gomock.Any(), gomock.Any()).Return(entity.Task{
+		Id:     1,
+		Name:   "task 1",
+		Status: 0,
+	}, nil)
+
+	data, err := suite.taskSrv.Create(context.Background(), entity.Task{
+		Id:     1,
+		Name:   "task 1",
+		Status: 0,
+	})
+
+	suite.NoError(err)
+
+	suite.Equal(entity.Task{
+		Id:     1,
+		Name:   "task 1",
+		Status: 0,
+	}, data)
+}

@@ -9,6 +9,7 @@ import (
 //go:generate mockgen -source ./service.go -destination=../mocks/task.go -package=mocks
 type ITaskRepository interface {
 	List(ctx context.Context) ([]entity.Task, error)
+	Create(ctx context.Context, task entity.Task) (entity.Task, error)
 }
 
 type Service struct {
