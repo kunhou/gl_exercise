@@ -9,17 +9,17 @@ import (
 	"github/kunhou/gl_exercise/internal/deliver/http/router"
 )
 
-// @title Task API
-// @version 1.0
-// @description This is a Task API server.
+// @title        Task API
+// @version      1.0
+// @description  This is a Task API server.
 // @termsOfService
 
-// @contact.name Kun Hou
+// @contact.name  Kun Hou
 // @contact.url
 // @contact.email
 
-// @host localhost:8080
-// @BasePath /
+// @host      localhost:8080
+// @BasePath  /
 func NewHTTPServer(debug bool, taskRouter *router.TaskRouter) *gin.Engine {
 	ginMode := gin.ReleaseMode
 	if debug {

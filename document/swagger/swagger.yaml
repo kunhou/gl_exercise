@@ -1,4 +1,41 @@
 basePath: /
+definitions:
+  entity.Task:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      status:
+        type: integer
+    type: object
+  schema.Response:
+    properties:
+      result: {}
+    type: object
+  schema.TaskCreateRequest:
+    properties:
+      name:
+        example: task 1
+        type: string
+    required:
+    - name
+    type: object
+  schema.TaskUpdateRequest:
+    properties:
+      name:
+        example: task 1
+        type: string
+      status:
+        enum:
+        - 0
+        - 1
+        example: 1
+        type: integer
+    required:
+    - name
+    - status
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -6,5 +43,142 @@ info:
   description: This is a Task API server.
   title: Task API
   version: "1.0"
-paths: {}
+paths:
+  /tasks:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/schema.Response'
+            - properties:
+                result:
+                  items:
+                    $ref: '#/definitions/entity.Task'
+                  type: array
+              type: object
+      summary: List tasks
+      tags:
+      - Task
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: task
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/schema.TaskCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/schema.Response'
+            - properties:
+                result:
+                  $ref: '#/definitions/entity.Task'
+              type: object
+        "400":
+          description: bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/schema.Response'
+            - properties:
+                result:
+                  type: string
+              type: object
+      summary: Create task
+      tags:
+      - Task
+  /tasks/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/schema.Response'
+            - properties:
+                result:
+                  type: string
+              type: object
+        "404":
+          description: not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/schema.Response'
+            - properties:
+                result:
+                  type: string
+              type: object
+      summary: Delete task
+      tags:
+      - Task
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update task
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/schema.TaskUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/schema.Response'
+            - properties:
+                result:
+                  $ref: '#/definitions/entity.Task'
+              type: object
+        "400":
+          description: bad request
+          schema:
+            allOf:
+            - $ref: '#/definitions/schema.Response'
+            - properties:
+                result:
+                  type: string
+              type: object
+        "404":
+          description: not found
+          schema:
+            allOf:
+            - $ref: '#/definitions/schema.Response'
+            - properties:
+                result:
+                  type: string
+              type: object
+      summary: Update task
+      tags:
+      - Task
 swagger: "2.0"
