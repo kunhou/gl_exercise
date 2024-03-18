@@ -12,6 +12,9 @@ import (
 type TaskRepo struct {
 	taskStorage map[int]entity.Task
 	rwmu        sync.RWMutex
+
+	// auto increment id
+	lastID int
 }
 
 // NewTaskRepo new task repository
@@ -35,6 +38,14 @@ func (t *TaskRepo) List(ctx context.Context) (tasks []entity.Task, err error) {
 
 // Create create task
 func (t *TaskRepo) Create(ctx context.Context, task entity.Task) (result entity.Task, err error) {
+	task.Id = t.autoIncrementID()
+
+	t.rwmu.Lock()
+	defer t.rwmu.Unlock()
+
+	t.taskStorage[task.Id] = task
+
+	result = task
 	return
 }
 
@@ -46,4 +57,13 @@ func (t *TaskRepo) Update(ctx context.Context, id int, task entity.Task) (result
 // Delete delete task
 func (t *TaskRepo) Delete(ctx context.Context, id int) error {
 	return nil
+}
+
+func (t *TaskRepo) autoIncrementID() int {
+	t.rwmu.Lock()
+	defer t.rwmu.Unlock()
+
+	t.lastID++
+
+	return t.lastID
 }

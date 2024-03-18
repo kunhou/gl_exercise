@@ -85,6 +85,8 @@ func (suite *taskTestSuite) TestCreate() {
 		Status: 0,
 	}
 
+	suite.repo.lastID = 1
+
 	task, err := suite.repo.Create(context.Background(), entity.Task{
 		Name:   "task 2",
 		Status: 0,
@@ -95,6 +97,23 @@ func (suite *taskTestSuite) TestCreate() {
 	suite.Equal(entity.Task{
 		Id:     2,
 		Name:   "task 2",
+		Status: 0,
+	}, task)
+}
+
+// test create first task
+func (suite *taskTestSuite) TestCreateFirst() {
+	// create
+	task, err := suite.repo.Create(context.Background(), entity.Task{
+		Name:   "task 1",
+		Status: 0,
+	})
+
+	suite.NoError(err)
+
+	suite.Equal(entity.Task{
+		Id:     1,
+		Name:   "task 1",
 		Status: 0,
 	}, task)
 }
