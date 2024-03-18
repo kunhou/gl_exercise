@@ -21,6 +21,15 @@ func NewTaskRepo() task.ITaskRepository {
 
 // List list tasks
 func (t *TaskRepo) List(ctx context.Context) (tasks []entity.Task, err error) {
+	tasks = make([]entity.Task, 0)
+
+	t.rwmu.RLock()
+	defer t.rwmu.RUnlock()
+
+	for _, task := range t.taskStorage {
+		tasks = append(tasks, task)
+	}
+
 	return
 }
 
