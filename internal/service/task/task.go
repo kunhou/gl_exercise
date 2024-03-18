@@ -17,5 +17,6 @@ func (s *Service) Create(ctx context.Context, task entity.Task) (result entity.T
 }
 
 func (s *Service) Update(ctx context.Context, id int, task entity.Task) (result entity.Task, err error) {
+	result, err = s.taskRepo.Update(ctx, id, task)
 	return
 }

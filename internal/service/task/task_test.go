@@ -97,7 +97,6 @@ func (suite *taskTestSuite) TestUpdate() {
 	}, nil)
 
 	data, err := suite.taskSrv.Update(context.Background(), 1, entity.Task{
-		Id:     1,
 		Name:   "task 1 updated",
 		Status: 1,
 	})
