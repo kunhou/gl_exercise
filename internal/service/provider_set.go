@@ -6,6 +6,6 @@ import (
 	"github/kunhou/gl_exercise/internal/service/task"
 )
 
-var ProviderSetUsecase = wire.NewSet(
+var ProviderSetService = wire.NewSet(
 	task.New,
 )
