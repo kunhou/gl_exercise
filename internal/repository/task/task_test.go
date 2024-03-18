@@ -77,3 +77,24 @@ func (suite *taskTestSuite) TestListEmpty() {
 
 	suite.Equal([]entity.Task{}, tasks)
 }
+
+func (suite *taskTestSuite) TestCreate() {
+	suite.repo.taskStorage[1] = entity.Task{
+		Id:     1,
+		Name:   "task 1",
+		Status: 0,
+	}
+
+	task, err := suite.repo.Create(context.Background(), entity.Task{
+		Name:   "task 2",
+		Status: 0,
+	})
+
+	suite.NoError(err)
+
+	suite.Equal(entity.Task{
+		Id:     2,
+		Name:   "task 2",
+		Status: 0,
+	}, task)
+}
