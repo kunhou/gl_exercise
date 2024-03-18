@@ -22,3 +22,7 @@ func (t *TaskRepo) List(ctx context.Context) (tasks []entity.Task, err error) {
 func (t *TaskRepo) Create(ctx context.Context, task entity.Task) (result entity.Task, err error) {
 	return
 }
+
+func (t *TaskRepo) Update(ctx context.Context, id int, task entity.Task) (result entity.Task, err error) {
+	return
+}

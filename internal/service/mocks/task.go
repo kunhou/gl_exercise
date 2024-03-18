@@ -64,3 +64,18 @@ func (mr *MockITaskRepositoryMockRecorder) List(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "List", reflect.TypeOf((*MockITaskRepository)(nil).List), ctx)
 }
+
+// Update mocks base method.
+func (m *MockITaskRepository) Update(ctx context.Context, id int, task entity.Task) (entity.Task, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", ctx, id, task)
+	ret0, _ := ret[0].(entity.Task)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockITaskRepositoryMockRecorder) Update(ctx, id, task interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockITaskRepository)(nil).Update), ctx, id, task)
+}
