@@ -4,7 +4,9 @@ import (
 	"context"
 	"sync"
 
+	"github/kunhou/gl_exercise/internal/common/reason"
 	"github/kunhou/gl_exercise/internal/entity"
+	"github/kunhou/gl_exercise/internal/pkg/errors"
 	"github/kunhou/gl_exercise/internal/service/task"
 )
 
@@ -51,7 +53,18 @@ func (t *TaskRepo) Create(ctx context.Context, task entity.Task) (result entity.
 
 // Update update task
 func (t *TaskRepo) Update(ctx context.Context, id int, task entity.Task) (result entity.Task, err error) {
-	return
+	t.rwmu.Lock()
+	defer t.rwmu.Unlock()
+
+	_, ok := t.taskStorage[id]
+	if !ok {
+		err = errors.NotFound(reason.TaskNotFound).WithStack()
+		return
+	}
+	task.Id = id
+	t.taskStorage[id] = task
+
+	return task, nil
 }
 
 // Delete delete task
