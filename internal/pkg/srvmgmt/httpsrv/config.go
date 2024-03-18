@@ -1,5 +1,5 @@
 package httpsrv
 
 type Config struct {
-	Addr string
+	Addr string `mapstructure:"HTTP_ADDR"`
 }

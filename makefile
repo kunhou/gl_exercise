@@ -7,3 +7,6 @@ run:
 
 build:
 	go build -o $(BIN) $(DIR_SRC)
+
+gen-doc:
+	swag init -g ./internal/deliver/http/server/http.go -o document/swagger/

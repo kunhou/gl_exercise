@@ -1,0 +1,10 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    name: Kun Hou
+  description: This is a Task API server.
+  title: Task API
+  version: "1.0"
+paths: {}
+swagger: "2.0"
