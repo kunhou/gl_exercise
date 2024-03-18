@@ -6,7 +6,9 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
+	"github/kunhou/gl_exercise/internal/common/reason"
 	"github/kunhou/gl_exercise/internal/entity"
+	"github/kunhou/gl_exercise/internal/pkg/errors"
 )
 
 type taskTestSuite struct {
@@ -101,7 +103,6 @@ func (suite *taskTestSuite) TestCreate() {
 	}, task)
 }
 
-// test create first task
 func (suite *taskTestSuite) TestCreateFirst() {
 	// create
 	task, err := suite.repo.Create(context.Background(), entity.Task{
@@ -116,4 +117,54 @@ func (suite *taskTestSuite) TestCreateFirst() {
 		Name:   "task 1",
 		Status: 0,
 	}, task)
+}
+
+func (suite *taskTestSuite) TestUpdate() {
+	suite.repo.taskStorage[1] = entity.Task{
+		Id:     1,
+		Name:   "task 1",
+		Status: 0,
+	}
+
+	suite.repo.taskStorage[2] = entity.Task{
+		Id:     2,
+		Name:   "task 2",
+		Status: 1,
+	}
+
+	// update
+	task, err := suite.repo.Update(context.Background(), 1, entity.Task{
+		Name:   "task 1 updated",
+		Status: 1,
+	})
+
+	suite.NoError(err)
+
+	suite.Equal(entity.Task{
+		Id:     1,
+		Name:   "task 1 updated",
+		Status: 1,
+	}, task)
+}
+
+// update not exist
+func (suite *taskTestSuite) TestUpdateNotExist() {
+	suite.repo.taskStorage[1] = entity.Task{
+		Id:     1,
+		Name:   "task 1",
+		Status: 0,
+	}
+
+	// update
+	task, err := suite.repo.Update(context.Background(), 2, entity.Task{
+		Name:   "task 2 updated",
+		Status: 0,
+	})
+
+	var myErr *errors.Error
+	suite.ErrorAs(err, &myErr)
+	suite.Equal(404, myErr.Code)
+	suite.Equal(reason.TaskNotFound, myErr.Reason)
+
+	suite.Equal(entity.Task{}, task)
 }
