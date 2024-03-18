@@ -69,6 +69,16 @@ func (t *TaskRepo) Update(ctx context.Context, id int, task entity.Task) (result
 
 // Delete delete task
 func (t *TaskRepo) Delete(ctx context.Context, id int) error {
+	t.rwmu.Lock()
+	defer t.rwmu.Unlock()
+
+	_, ok := t.taskStorage[id]
+	if !ok {
+		return errors.NotFound(reason.TaskNotFound).WithStack()
+	}
+
+	delete(t.taskStorage, id)
+
 	return nil
 }
 
