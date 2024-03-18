@@ -7,5 +7,6 @@ import (
 )
 
 func (s *Service) List(ctx context.Context) (tasks []entity.Task, err error) {
+	tasks, err = s.taskRepo.List(ctx)
 	return
 }
