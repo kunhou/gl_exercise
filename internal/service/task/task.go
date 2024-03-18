@@ -12,5 +12,6 @@ func (s *Service) List(ctx context.Context) (tasks []entity.Task, err error) {
 }
 
 func (s *Service) Create(ctx context.Context, task entity.Task) (result entity.Task, err error) {
+	result, err = s.taskRepo.Create(ctx, task)
 	return
 }
