@@ -1,6 +1,7 @@
 package router
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -84,4 +85,30 @@ func (suite *taskTestSuite) TestListWithError() {
 
 	suite.Equal(http.StatusInternalServerError, response.Code)
 	suite.Equal(`{"result":"unknown_error"}`, response.Body.String())
+}
+
+func (suite *taskTestSuite) TestCreate() {
+	suite.srv.EXPECT().Create(gomock.Any(), entity.Task{
+		Name: "task 1",
+	}).Return(entity.Task{
+		Id:     1,
+		Name:   "task 1",
+		Status: 0,
+	}, nil)
+
+	request, _ := http.NewRequest(http.MethodPost, "/task", bytes.NewBuffer([]byte(`{"name":"task 1"}`)))
+	response := httptest.NewRecorder()
+	suite.router.ServeHTTP(response, request)
+
+	suite.Equal(http.StatusCreated, response.Code)
+	suite.Equal(`{"result":{"id":1,"name":"task 1","status":0}}`, response.Body.String())
+}
+
+func (suite *taskTestSuite) TestCreateWithoutName() {
+	request, _ := http.NewRequest(http.MethodPost, "/task", bytes.NewBuffer([]byte(`{}`)))
+	response := httptest.NewRecorder()
+	suite.router.ServeHTTP(response, request)
+
+	suite.Equal(http.StatusBadRequest, response.Code)
+	suite.Equal(`{"result":"Key: 'TaskCreateRequest.Name' Error:Field validation for 'Name' failed on the 'required' tag"}`, response.Body.String())
 }
