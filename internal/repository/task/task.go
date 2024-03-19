@@ -21,7 +21,9 @@ type TaskRepo struct {
 
 // NewTaskRepo new task repository
 func NewTaskRepo() task.ITaskRepository {
-	return &TaskRepo{}
+	return &TaskRepo{
+		taskStorage: make(map[int]entity.Task),
+	}
 }
 
 // List list tasks
