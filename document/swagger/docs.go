@@ -314,10 +314,12 @@ var doc = `{
             ],
             "properties": {
                 "name": {
+                    "description": "task name",
                     "type": "string",
                     "example": "task 1"
                 },
                 "status": {
+                    "description": "0: incomplete, 1: complete",
                     "type": "integer",
                     "enum": [
                         0,

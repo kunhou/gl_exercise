@@ -9,6 +9,8 @@ type TaskParam struct {
 }
 
 type TaskUpdateRequest struct {
-	Name   string `json:"name" example:"task 1" binding:"required"`
-	Status *int   `json:"status" example:"1" binding:"required,oneof=0 1"`
+	// task name
+	Name string `json:"name" example:"task 1" binding:"required"`
+	// 0: incomplete, 1: complete
+	Status *int `json:"status" example:"1" binding:"required,oneof=0 1"`
 }

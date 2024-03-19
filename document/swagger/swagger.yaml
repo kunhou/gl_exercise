@@ -24,9 +24,11 @@ definitions:
   schema.TaskUpdateRequest:
     properties:
       name:
+        description: task name
         example: task 1
         type: string
       status:
+        description: '0: incomplete, 1: complete'
         enum:
         - 0
         - 1

@@ -122,9 +122,17 @@ func (t *TaskRouter) Update(ctx *gin.Context) {
 		return
 	}
 
+	var status entity.TaskStatus
+	switch *req.Status {
+	case 0:
+		status = entity.TaskStatusIncomplete
+	case 1:
+		status = entity.TaskStatusComplete
+	}
+
 	task := entity.Task{
 		Name:   req.Name,
-		Status: *req.Status,
+		Status: status,
 	}
 
 	result, err := t.s.Update(ctx, param.Id, task)
