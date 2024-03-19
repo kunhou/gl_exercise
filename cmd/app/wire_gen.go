@@ -20,8 +20,8 @@ import (
 // initApplication init application.
 func initApplication(debug bool, serverConf *config.Server) (*srvmgmt.Application, func(), error) {
 	iTaskRepository := task.NewTaskRepo()
-	service := task2.New(iTaskRepository)
-	taskRouter := router.NewTaskRouter(service)
+	iTaskService := task2.New(iTaskRepository)
+	taskRouter := router.NewTaskRouter(iTaskService)
 	engine := server.NewHTTPServer(debug, taskRouter)
 	application := newApplication(serverConf, engine)
 	return application, func() {

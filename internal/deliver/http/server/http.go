@@ -33,6 +33,8 @@ func NewHTTPServer(debug bool, taskRouter *router.TaskRouter) *gin.Engine {
 		ctx.String(200, "OK")
 	})
 
+	taskRouter.RegisterRouter(r)
+
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	return r
 }

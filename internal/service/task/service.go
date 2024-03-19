@@ -3,6 +3,7 @@ package task
 import (
 	"context"
 
+	"github/kunhou/gl_exercise/internal/deliver/http/router"
 	"github/kunhou/gl_exercise/internal/entity"
 )
 
@@ -21,7 +22,7 @@ type Service struct {
 }
 
 // New new task service
-func New(taskRepo ITaskRepository) *Service {
+func New(taskRepo ITaskRepository) router.ITaskService {
 	return &Service{
 		taskRepo: taskRepo,
 	}

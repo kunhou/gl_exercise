@@ -7,6 +7,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/suite"
 
+	"github/kunhou/gl_exercise/internal/deliver/http/router"
 	"github/kunhou/gl_exercise/internal/entity"
 	"github/kunhou/gl_exercise/internal/service/mocks"
 )
@@ -16,7 +17,7 @@ type taskTestSuite struct {
 	ctrl *gomock.Controller
 	repo *mocks.MockITaskRepository
 
-	taskSrv *Service
+	taskSrv router.ITaskService
 }
 
 func (suite *taskTestSuite) SetupTest() {

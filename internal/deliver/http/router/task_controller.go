@@ -1,19 +1,33 @@
 package router
 
 import (
+	"context"
+
 	"github.com/gin-gonic/gin"
 
-	"github/kunhou/gl_exercise/internal/service/task"
+	"github/kunhou/gl_exercise/internal/entity"
 )
 
 type TaskRouter struct {
-	s *task.Service
+	s ITaskService
 }
 
-func NewTaskRouter(s *task.Service) *TaskRouter {
+//go:generate mockgen -source ./task_controller.go -destination=../mocks/task_controller.go -package=mocks
+type ITaskService interface {
+	List(ctx context.Context) (tasks []entity.Task, err error)
+	Create(ctx context.Context, task entity.Task) (result entity.Task, err error)
+	Update(ctx context.Context, id int, task entity.Task) (result entity.Task, err error)
+	Delete(ctx context.Context, id int) error
+}
+
+func NewTaskRouter(s ITaskService) *TaskRouter {
 	return &TaskRouter{
 		s: s,
 	}
+}
+
+func (t *TaskRouter) RegisterRouter(r *gin.Engine) {
+	r.GET("/tasks", t.List)
 }
 
 // List lists tasks
