@@ -1,0 +1,18 @@
+# Builder stage
+FROM golang:1.17.8 AS builder
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64
+
+WORKDIR /workspace
+COPY . .
+RUN go mod tidy
+RUN go build -o app ./cmd/app
+
+FROM alpine:latest
+WORKDIR /root
+COPY --from=builder /workspace/app .
+
+EXPOSE 8080
+CMD ["./app"]
