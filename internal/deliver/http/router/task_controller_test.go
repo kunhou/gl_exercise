@@ -235,3 +235,25 @@ func (suite *taskTestSuite) TestUpdateNotFound() {
 	suite.Equal(http.StatusNotFound, response.Code)
 	suite.Equal(`{"result":"error.task.not_found"}`, response.Body.String())
 }
+
+func (suite *taskTestSuite) TestDelete() {
+	suite.srv.EXPECT().Delete(gomock.Any(), 1).Return(nil)
+
+	request, _ := http.NewRequest(http.MethodDelete, "/task/1", nil)
+	response := httptest.NewRecorder()
+	suite.router.ServeHTTP(response, request)
+
+	suite.Equal(http.StatusOK, response.Code)
+	suite.Equal(`{"result":"success"}`, response.Body.String())
+}
+
+func (suite *taskTestSuite) TestDeleteNotFound() {
+	suite.srv.EXPECT().Delete(gomock.Any(), 1).Return(errors.NotFound(reason.TaskNotFound))
+
+	request, _ := http.NewRequest(http.MethodDelete, "/task/1", nil)
+	response := httptest.NewRecorder()
+	suite.router.ServeHTTP(response, request)
+
+	suite.Equal(http.StatusNotFound, response.Code)
+	suite.Equal(`{"result":"error.task.not_found"}`, response.Body.String())
+}
