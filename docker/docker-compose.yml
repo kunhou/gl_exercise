@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  task-server:
+    image: patrice43/task-server:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - DEBUG=true
+      - HTTP_ADDR=:8080
+    restart: always
