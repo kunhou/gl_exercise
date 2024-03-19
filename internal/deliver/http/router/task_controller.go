@@ -35,6 +35,7 @@ func (t *TaskRouter) RegisterRouter(r *gin.Engine) {
 	r.GET("/tasks", t.List)
 	r.POST("/task", t.Create)
 	r.PUT("/task/:id", t.Update)
+	r.DELETE("/task/:id", t.Delete)
 }
 
 // List lists tasks
@@ -156,4 +157,30 @@ func (t *TaskRouter) Update(ctx *gin.Context) {
 // @Failure  404   {object}  schema.Response{result=string}       "not found"
 // @Router   /tasks/{id} [delete]
 func (t *TaskRouter) Delete(ctx *gin.Context) {
+	param := &schema.TaskParam{}
+	if err := ctx.BindUri(param); err != nil {
+		ctx.JSON(http.StatusBadRequest, schema.Response{
+			Result: reason.RequestFormatError,
+		})
+		return
+	}
+
+	err := t.s.Delete(ctx, param.Id)
+	if err != nil {
+		var myErr *merr.Error
+		if errors.As(err, &myErr) {
+			ctx.JSON(myErr.Code, schema.Response{
+				Result: myErr.Reason,
+			})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, schema.Response{
+			Result: reason.UnknownError,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, schema.Response{
+		Result: reason.Success,
+	})
 }
