@@ -110,5 +110,128 @@ func (suite *taskTestSuite) TestCreateWithoutName() {
 	suite.router.ServeHTTP(response, request)
 
 	suite.Equal(http.StatusBadRequest, response.Code)
-	suite.Equal(`{"result":"Key: 'TaskCreateRequest.Name' Error:Field validation for 'Name' failed on the 'required' tag"}`, response.Body.String())
+	suite.Equal(`{"result":"request_format_error"}`, response.Body.String())
+}
+
+// test update task
+func (suite *taskTestSuite) TestUpdateSuccess() {
+	tests := []struct {
+		name                string
+		body                string
+		mockUpdateInputId   int
+		mockUpdateInputTask entity.Task
+		mockUpdateResult    entity.Task
+		responseCode        int
+		responseBody        string
+	}{
+		{
+			name:              "update success",
+			body:              `{"name":"task 1","status":1}`,
+			mockUpdateInputId: 1,
+			mockUpdateInputTask: entity.Task{
+				Name:   "task 1",
+				Status: 1,
+			},
+			mockUpdateResult: entity.Task{
+				Id:     1,
+				Name:   "task 1",
+				Status: 1,
+			},
+			responseCode: http.StatusOK,
+			responseBody: `{"result":{"id":1,"name":"task 1","status":1}}`,
+		},
+		{
+			name:              "update success with status 0",
+			body:              `{"name":"task 1","status":0}`,
+			mockUpdateInputId: 1,
+			mockUpdateInputTask: entity.Task{
+				Name:   "task 1",
+				Status: 0,
+			},
+			mockUpdateResult: entity.Task{
+				Id:     1,
+				Name:   "task 1",
+				Status: 0,
+			},
+			responseCode: http.StatusOK,
+			responseBody: `{"result":{"id":1,"name":"task 1","status":0}}`,
+		},
+	}
+
+	for _, tt := range tests {
+		suite.Run(tt.name, func() {
+			suite.srv.EXPECT().Update(gomock.Any(), tt.mockUpdateInputId, tt.mockUpdateInputTask).Return(tt.mockUpdateResult, nil)
+
+			request, _ := http.NewRequest(http.MethodPut, "/task/1", bytes.NewBuffer([]byte(tt.body)))
+			response := httptest.NewRecorder()
+			suite.router.ServeHTTP(response, request)
+
+			suite.Equal(tt.responseCode, response.Code)
+			suite.Equal(tt.responseBody, response.Body.String())
+		})
+	}
+}
+
+func (suite *taskTestSuite) TestUpdateWithInvalidInput() {
+	tests := []struct {
+		name         string
+		id           string
+		body         string
+		responseCode int
+		responseBody string
+	}{
+		{
+			name:         "update without name",
+			id:           "1",
+			body:         `{"status": 0}`,
+			responseCode: http.StatusBadRequest,
+			responseBody: `{"result":"request_format_error"}`,
+		},
+		{
+			name:         "update without status",
+			id:           "1",
+			body:         `{"name": "task 1"}`,
+			responseCode: http.StatusBadRequest,
+			responseBody: `{"result":"request_format_error"}`,
+		},
+		{
+			name:         "update with invalid status",
+			id:           "1",
+			body:         `{"name":"task 1","status":2}`,
+			responseCode: http.StatusBadRequest,
+			responseBody: `{"result":"request_format_error"}`,
+		},
+		{
+			name:         "update with invalid id",
+			id:           "a",
+			body:         `{"name":"task 1","status":1}`,
+			responseCode: http.StatusBadRequest,
+			responseBody: `{"result":"request_format_error"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		suite.Run(tt.name, func() {
+			request, _ := http.NewRequest(http.MethodPut, "/task/"+tt.id, bytes.NewBuffer([]byte(tt.body)))
+			response := httptest.NewRecorder()
+			suite.router.ServeHTTP(response, request)
+
+			suite.Equal(tt.responseCode, response.Code)
+			suite.Equal(tt.responseBody, response.Body.String())
+		})
+	}
+}
+
+func (suite *taskTestSuite) TestUpdateNotFound() {
+	suite.srv.EXPECT().Update(gomock.Any(), 1, entity.Task{
+		Name:   "task 1",
+		Status: 0,
+	}).Return(entity.Task{}, errors.NotFound(reason.TaskNotFound))
+
+	request, _ := http.NewRequest(http.MethodPut, "/task/1", bytes.NewBuffer([]byte(`{"name":"task 1","status":0}`)))
+	response := httptest.NewRecorder()
+	suite.router.ServeHTTP(response, request)
+
+	suite.Equal(http.StatusNotFound, response.Code)
+	suite.Equal(`{"result":"error.task.not_found"}`, response.Body.String())
 }
