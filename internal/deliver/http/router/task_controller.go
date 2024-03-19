@@ -2,12 +2,15 @@ package router
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
+	"github/kunhou/gl_exercise/internal/common/reason"
 	"github/kunhou/gl_exercise/internal/deliver/http/schema"
 	"github/kunhou/gl_exercise/internal/entity"
+	merr "github/kunhou/gl_exercise/internal/pkg/errors"
 )
 
 type TaskRouter struct {
@@ -31,6 +34,7 @@ func NewTaskRouter(s ITaskService) *TaskRouter {
 func (t *TaskRouter) RegisterRouter(r *gin.Engine) {
 	r.GET("/tasks", t.List)
 	r.POST("/task", t.Create)
+	r.PUT("/task/:id", t.Update)
 }
 
 // List lists tasks
@@ -44,7 +48,7 @@ func (t *TaskRouter) List(ctx *gin.Context) {
 	tasks, err := t.s.List(ctx)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, schema.Response{
-			Result: err.Error(),
+			Result: reason.UnknownError,
 		})
 		return
 	}
@@ -67,7 +71,7 @@ func (t *TaskRouter) Create(ctx *gin.Context) {
 	req := &schema.TaskCreateRequest{}
 	if err := ctx.ShouldBindJSON(req); err != nil {
 		ctx.JSON(http.StatusBadRequest, schema.Response{
-			Result: err.Error(),
+			Result: reason.RequestFormatError,
 		})
 		return
 	}
@@ -79,7 +83,7 @@ func (t *TaskRouter) Create(ctx *gin.Context) {
 	result, err := t.s.Create(ctx, task)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, schema.Response{
-			Result: err.Error(),
+			Result: reason.UnknownError,
 		})
 		return
 	}
@@ -101,6 +105,45 @@ func (t *TaskRouter) Create(ctx *gin.Context) {
 // @Failure  404  {object}  schema.Response{result=string}  "not found"
 // @Router   /tasks/{id} [put]
 func (t *TaskRouter) Update(ctx *gin.Context) {
+	req := &schema.TaskUpdateRequest{}
+	if err := ctx.ShouldBindJSON(req); err != nil {
+		ctx.JSON(http.StatusBadRequest, schema.Response{
+			Result: reason.RequestFormatError,
+		})
+		return
+	}
+
+	param := &schema.TaskParam{}
+	if err := ctx.BindUri(param); err != nil {
+		ctx.JSON(http.StatusBadRequest, schema.Response{
+			Result: reason.RequestFormatError,
+		})
+		return
+	}
+
+	task := entity.Task{
+		Name:   req.Name,
+		Status: *req.Status,
+	}
+
+	result, err := t.s.Update(ctx, param.Id, task)
+	if err != nil {
+		var myErr *merr.Error
+		if errors.As(err, &myErr) {
+			ctx.JSON(myErr.Code, schema.Response{
+				Result: myErr.Reason,
+			})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, schema.Response{
+			Result: reason.UnknownError,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, schema.Response{
+		Result: result,
+	})
 }
 
 // Delete deletes a task
