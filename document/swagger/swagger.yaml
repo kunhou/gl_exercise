@@ -44,27 +44,7 @@ info:
   title: Task API
   version: "1.0"
 paths:
-  /tasks:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ok
-          schema:
-            allOf:
-            - $ref: '#/definitions/schema.Response'
-            - properties:
-                result:
-                  items:
-                    $ref: '#/definitions/entity.Task'
-                  type: array
-              type: object
-      summary: List tasks
-      tags:
-      - Task
+  /task:
     post:
       consumes:
       - application/json
@@ -99,7 +79,7 @@ paths:
       summary: Create task
       tags:
       - Task
-  /tasks/{id}:
+  /task/{id}:
     delete:
       consumes:
       - application/json
@@ -179,6 +159,27 @@ paths:
                   type: string
               type: object
       summary: Update task
+      tags:
+      - Task
+  /tasks:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/schema.Response'
+            - properties:
+                result:
+                  items:
+                    $ref: '#/definitions/entity.Task'
+                  type: array
+              type: object
+      summary: List tasks
       tags:
       - Task
 swagger: "2.0"

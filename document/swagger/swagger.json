@@ -11,42 +11,7 @@
     "host": "localhost:8080",
     "basePath": "/",
     "paths": {
-        "/tasks": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Task"
-                ],
-                "summary": "List tasks",
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/schema.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "result": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/entity.Task"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            },
+        "/task": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -109,7 +74,7 @@
                 }
             }
         },
-        "/tasks/{id}": {
+        "/task/{id}": {
             "put": {
                 "consumes": [
                     "application/json"
@@ -247,6 +212,43 @@
                                     "properties": {
                                         "result": {
                                             "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Task"
+                ],
+                "summary": "List tasks",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/schema.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "result": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/entity.Task"
+                                            }
                                         }
                                     }
                                 }

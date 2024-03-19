@@ -67,7 +67,7 @@ func (t *TaskRouter) List(ctx *gin.Context) {
 // @Param    task  body      schema.TaskCreateRequest             true  "task"
 // @Success  200   {object}  schema.Response{result=entity.Task}  "ok"
 // @Failure  400   {object}  schema.Response{result=string}       "bad request"
-// @Router   /tasks [post]
+// @Router   /task [post]
 func (t *TaskRouter) Create(ctx *gin.Context) {
 	req := &schema.TaskCreateRequest{}
 	if err := ctx.ShouldBindJSON(req); err != nil {
@@ -104,7 +104,7 @@ func (t *TaskRouter) Create(ctx *gin.Context) {
 // @Success  200   {object}  schema.Response{result=entity.Task}  "ok"
 // @Failure  400   {object}  schema.Response{result=string}       "bad request"
 // @Failure  404  {object}  schema.Response{result=string}  "not found"
-// @Router   /tasks/{id} [put]
+// @Router   /task/{id} [put]
 func (t *TaskRouter) Update(ctx *gin.Context) {
 	req := &schema.TaskUpdateRequest{}
 	if err := ctx.ShouldBindJSON(req); err != nil {
@@ -155,7 +155,7 @@ func (t *TaskRouter) Update(ctx *gin.Context) {
 // @Param    id    path      int                                  true  "Task ID"
 // @Success  200  {object}  schema.Response{result=string}  "ok"
 // @Failure  404   {object}  schema.Response{result=string}       "not found"
-// @Router   /tasks/{id} [delete]
+// @Router   /task/{id} [delete]
 func (t *TaskRouter) Delete(ctx *gin.Context) {
 	param := &schema.TaskParam{}
 	if err := ctx.BindUri(param); err != nil {
