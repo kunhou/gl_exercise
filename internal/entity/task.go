@@ -1,7 +1,7 @@
 package entity
 
 type Task struct {
-	Id     int
-	Name   string
-	Status int
+	Id     int    `json:"id"`
+	Name   string `json:"name"`
+	Status int    `json:"status"`
 }

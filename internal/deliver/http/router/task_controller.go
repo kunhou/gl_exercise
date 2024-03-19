@@ -2,9 +2,11 @@ package router
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 
+	"github/kunhou/gl_exercise/internal/deliver/http/schema"
 	"github/kunhou/gl_exercise/internal/entity"
 )
 
@@ -38,6 +40,17 @@ func (t *TaskRouter) RegisterRouter(r *gin.Engine) {
 // @Success  200  {object}  schema.Response{result=[]entity.Task}  "ok"
 // @Router   /tasks [get]
 func (t *TaskRouter) List(ctx *gin.Context) {
+	tasks, err := t.s.List(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, schema.Response{
+			Result: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, schema.Response{
+		Result: tasks,
+	})
 }
 
 // Create creates a task
