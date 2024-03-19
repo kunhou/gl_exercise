@@ -30,6 +30,7 @@ func NewTaskRouter(s ITaskService) *TaskRouter {
 
 func (t *TaskRouter) RegisterRouter(r *gin.Engine) {
 	r.GET("/tasks", t.List)
+	r.POST("/task", t.Create)
 }
 
 // List lists tasks
@@ -63,6 +64,29 @@ func (t *TaskRouter) List(ctx *gin.Context) {
 // @Failure  400   {object}  schema.Response{result=string}       "bad request"
 // @Router   /tasks [post]
 func (t *TaskRouter) Create(ctx *gin.Context) {
+	req := &schema.TaskCreateRequest{}
+	if err := ctx.ShouldBindJSON(req); err != nil {
+		ctx.JSON(http.StatusBadRequest, schema.Response{
+			Result: err.Error(),
+		})
+		return
+	}
+
+	task := entity.Task{
+		Name: req.Name,
+	}
+
+	result, err := t.s.Create(ctx, task)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, schema.Response{
+			Result: err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, schema.Response{
+		Result: result,
+	})
 }
 
 // Update updates a task
