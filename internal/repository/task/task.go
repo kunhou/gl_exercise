@@ -2,6 +2,7 @@ package task
 
 import (
 	"context"
+	"sort"
 	"sync"
 
 	"github/kunhou/gl_exercise/internal/common/reason"
@@ -37,6 +38,9 @@ func (t *TaskRepo) List(ctx context.Context) (tasks []entity.Task, err error) {
 		tasks = append(tasks, task)
 	}
 
+	sort.Slice(tasks, func(i, j int) bool {
+		return tasks[i].Id < tasks[j].Id
+	})
 	return
 }
 
