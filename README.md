@@ -26,6 +26,13 @@ This repository implements a RESTful API for managing tasks. It allows users to 
    docker-compose -f docker/docker-compose.yml down
    ```
 
+## Environment Variables
+
+| Name      | Description                                      |
+| --------- | ------------------------------------------------ |
+| DEBUG     | enable debug mode, default is `false`            |
+| HTTP_ADDR | the address of the HTTP server, default is `:80` |
+
 ## Development Guide
 
 ### Prerequisites
