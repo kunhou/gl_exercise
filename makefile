@@ -2,10 +2,16 @@
 DIR_SRC=./cmd/app
 BIN=bin/app
 
-run:
+wire:
+	wire ./...
+
+test:
+	go test -cover ./...
+
+run: wire
 	go run $(DIR_SRC)
 
-build:
+build: wire
 	go build -o $(BIN) $(DIR_SRC)
 
 gen-doc:
